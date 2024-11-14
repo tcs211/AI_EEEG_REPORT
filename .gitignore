@@ -1,0 +1,4 @@
+config.env
+/SPIS_dataset
+/pdf
+__pycache__
