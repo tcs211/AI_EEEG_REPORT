@@ -59,8 +59,6 @@ ANTHROPIC_API_KEY=YOUR_ANTHROPIC_API_KEY
 OPENAI_KEY=YOUR_OPENAI_KEY
 ```
 
-[Previous sections remain the same until Usage section...]
-
 ## Usage
 
 ### Supported File Formats
