@@ -1,71 +1,154 @@
-# A Hybrid AI System for Automated EEG Background Analysis and Report Generation
-## Introduction
-This repository contains the code for the paper titled "A Hybrid Artificial Intelligence System for Automated EEG Background Analysis and Report Generation" by Chin-Sung Tung, Sheng-Fu Liang, Shu-Feng Chang, and Chung-Ping Young (doi: 10.1109/JBHI.2024.3496996). The paper is accepted for publication in the IEEE Journal of Biomedical and Health Informatics. The code in this repository demonstrates the example code to create a full automated EEG background analysis and report generation by LLM API. The code includes the following functionalities:
+# EEG-AI-Report-Generator
 
-1. The file - eegFeatureExtract.py is from the following repository and it's original paper:  S. Saba-Sadiya, E. Chantland, T. Alhanai, T. Liu, and M. M. Ghassemi,
-“Unsupervised eeg artifact detection and correction,” Frontiers in Digital
-Health, vol. 2, 2021. https://github.com/sari-saba-sadiya/EEGExtract
+A hybrid AI system that performs automated EEG background analysis and generates clinical reports. This is the implementation of our IEEE JBHI paper (2024).
 
-1. Since the dataset in this work is not available for ethical reasons, you can use the online open-source datasets to test the code, such as the SPIS Dataset, the link is provided below.
-1. The CNN model architecture can be found in the models.py file. 
-1. The prompts for LLMs to generate and validate the EEG report can be found in the prompts.py file.
+[![DOI](https://img.shields.io/badge/DOI-10.1109%2FJBHI.2024.3496996-blue)](https://doi.org/10.1109/JBHI.2024.3496996)
 
+## Paper Information
 
-## Environment Setup
+This code implements the methodology described in:
 
-To set up the environment for running the code, follow these steps:
+"A Hybrid Artificial Intelligence System for Automated EEG Background Analysis and Report Generation"  
+*IEEE Journal of Biomedical and Health Informatics (2024)*  
+https://doi.org/10.1109/JBHI.2024.3496996
 
-1. Conda Environment is recommended for running the code. 
-2. Install the required python dependencies by running the following command:
-   ```
-   pip install tensorflow google-generativeai anthropic openai mne python-dotenv ipykernel matplotlib pyod pandas scikit-learn seaborn tqdm ipywidgets PyWavelets beautifulsoup4 fpdf2 mne-qt-browser PyQt6 dit librosa statsmodels pyinform pymatreader6 
-   ```
+The paper and its contents are © 2024 IEEE. 
+<!-- Personal use of this material is permitted. Permission from IEEE must be obtained for all other uses, in any current or future media, including reprinting/republishing this material for advertising or promotional purposes, creating new collective works, for resale or redistribution to servers or lists, or reuse of any copyrighted component of this work in other works. -->
 
-## Create a config.env File
+## Code License
 
-Create a `config.env` file in the root directory of the project and add the following API keys:
+This code is released under the GNU General Public License v3.0 (GPL-3.0). You are free to use, modify, and distribute this code according to the terms of the GPL-3.0 license.
 
-```python
+## Overview
+
+This repository provides an implementation of automated EEG background analysis and report generation using a hybrid AI approach. The system combines deep learning for EEG analysis with large language models for report generation.
+
+### Key Features
+
+- Automated EEG background analysis
+- AI-powered report generation using multiple LLM providers
+- Support for standard EEG file formats (EDF, FIF)
+- Support for SPIS dataset MAT files
+- Multi-language report generation
+- PDF report export
+
+## Installation
+
+### Prerequisites
+
+We recommend using a Conda environment for installation.
+
+### Dependencies
+
+Install required packages:
+
+```bash
+pip install tensorflow google-generativeai anthropic openai mne python-dotenv \
+    ipykernel matplotlib pyod pandas scikit-learn seaborn tqdm ipywidgets \
+    PyWavelets beautifulsoup4 fpdf2 mne-qt-browser PyQt6 dit librosa \
+    statsmodels pyinform pymatreader6
+```
+
+### API Configuration
+
+1. Create a `config.env` file in the project root
+2. Add your API keys:
+```
 GOOGLE_API_KEY=YOUR_GOOGLE_API_KEY
 ANTHROPIC_API_KEY=YOUR_ANTHROPIC_API_KEY
 OPENAI_KEY=YOUR_OPENAI_KEY
 ```
 
-Replace `YOUR_GOOGLE_API_KEY`, `YOUR_ANTHROPIC_API_KEY`, and `YOUR_OPENAI_KEY` with your actual API keys.
+[Previous sections remain the same until Usage section...]
 
-## Test with open-source Dataset
+## Usage
 
-### SPIS Dataset
-[https://github.com/mastaneht/SPIS-Resting-State-Dataset/tree/master/Pre-SART%20EEG](https://github.com/mastaneht/SPIS-Resting-State-Dataset/tree/master/Pre-SART%20EEG)
+### Supported File Formats
+- EDF: General EEG recordings
+- FIF: General EEG recordings
+- MAT: SPIS dataset files only
 
-### Temple University Hospital EEG Dataset
-[https://isip.piconepress.com/projects/tuh_eeg/](https://isip.piconepress.com/projects/tuh_eeg/)
 
+### Required EEG Channels
 
-## Example Usage
+The system requires the following 10-20 system electrodes (or equivalent mapped channels):
+- Fp1, Fp2
+- F7, F8, F3, F4, Fz
+- C3, C4, Cz
+- P3, P4, Pz
+- T3, T4, T5, T6
+- O1, O2
 
-To run the code, use the following command:
+## Test Datasets
 
-```python
-python report.py ./SPIS_dataset/S04_restingPre_EC.mat --pdf --out ./pdf --ai --lang "english"
+### SPIS Dataset (MAT format)
+Open-source resting-state EEG data:
+- [SPIS Dataset Repository](https://github.com/mastaneht/SPIS-Resting-State-Dataset/tree/master/Pre-SART%20EEG)
+
+### Temple University Hospital (TUH) EEG Dataset (EDF format)
+Large clinical EEG database:
+- [TUH EEG Dataset](https://isip.piconepress.com/projects/tuh_eeg/)
+
+### Command Parameters
+
+```bash
+python report.py <eeg_file> [options]
 ```
 
-The command takes the following arguments:
-- `./SPIS_dataset/S04_restingPre_EC.mat`: The path to the input EEG data file.
-- `--pdf`: Flag to generate the report in PDF format.
-- `--out ./pdf`: The output directory where the generated report will be saved.
-- `--ai`: Flag to enable AI-based analysis and report generation.
-- `--lang "english"`: The language of the generated report (in this case, English).
+#### Required Parameters
+- `eeg_file`: Path to the input EEG data file (EDF, FIF, or MAT format)
 
-Make sure to replace `./SPIS_dataset/S04_restingPre_EC.mat` with the path to your desired input EEG data file.
+#### Optional Parameters
+- `--pdf`: Generate output in PDF format
+- `--out <directory>`: Specify output directory for generated reports (default: current directory)
+- `--ai`: Enable automated report generation using Large Language Models (LLMs)
+  - Uses configured LLM APIs (Google PaLM, Anthropic Claude, OpenAI) for report generation
+  - Requires valid API keys in config.env
+- `--lang <language>`: Specify report language
+  - Default: "english"
+  - Supports any language available in the configured LLM models
+  - Common options: English, Chinese (Simplified/Traditional), Japanese, Korean, Spanish, French, German, etc.
+  - Language support depends on the capabilities of the configured LLM models
 
-## License
+### Example Commands
 
-This project is licensed under the GNU General Public License v3.0 (GPL-3.0). If you use or share this work, you must cite the following citation.
+```bash
+# Basic usage with SPIS dataset (MAT format)
+python report.py ./SPIS_dataset/S04_restingPre_EC.mat \
+    --pdf \            # Generate PDF report
+    --out ./pdf \      # Save to ./pdf directory
+    --ai \             # Enable LLM report generation
+    --lang "english"   # Generate report in English
+
+# Generate report in Traditional Chinese
+python report.py ./recordings/patient001.edf \
+    --pdf \
+    --out ./reports \
+    --ai \
+    --lang "traditional chinese"
+
+# Generate report in Japanese
+python report.py ./recordings/patient002.edf \
+    --pdf \
+    --out ./reports \
+    --ai \
+    --lang "japanese"
+```
+
+### Note on Language Support
+
+The `--lang` parameter accepts languages supported by the configured LLM models. Language availability and quality may vary depending on the specific LLM model being used. Please refer to the documentation of your configured LLM providers (Google PaLM, Anthropic Claude, OpenAI) for detailed language support information.
+
+
+## Code Attribution
+
+The `eegFeatureExtract.py` module is adapted from:
+> S. Saba-Sadiya, et al. "Unsupervised EEG artifact detection and correction," Frontiers in Digital Health, vol. 2, 2021. 
+> [Original Repository](https://github.com/sari-saba-sadiya/EEGExtract)
 
 ## Citation
 
-This article is accepted for publication in the IEEE Journal of Biomedical and Health Informatics. If you use this code, please cite the following article:
+If you use this code in your research, please cite:
 
 ```bibtex
 @ARTICLE{10752384,
@@ -73,9 +156,6 @@ This article is accepted for publication in the IEEE Journal of Biomedical and H
   journal={IEEE Journal of Biomedical and Health Informatics}, 
   title={A Hybrid Artificial Intelligence System for Automated EEG Background Analysis and Report Generation}, 
   year={2024},
-  volume={},
-  number={},
   pages={1-13},
-  keywords={Electroencephalography (EEG);artificial intelligence;deep learning;report generation;large language models},
   doi={10.1109/JBHI.2024.3496996}}
 ```
