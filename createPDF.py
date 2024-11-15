@@ -84,10 +84,9 @@ class writePDF:
         pdf.set_margins(left=8, top=10, right=8)
         
         line_height = 7.5
-        fontName='Calibri'
-        pdf.add_font(fontName, '', 'c:/Windows/Fonts/calibri.ttf', uni=True)
-        chineseFont='Microsoft JhengHei'
-        pdf.add_font(chineseFont, '', 'c:/Windows/Fonts/msjh.ttc', uni=True)
+        fontName='Arial Unicode MS'
+        pdf.add_font(fontName, '', './arialuni.ttf', uni=True)
+    
         
         pdf.set_font(fontName, size=18)
         pdf.add_page(orientation = 'P')
@@ -111,13 +110,13 @@ class writePDF:
         if self.ai_report_text:
             # write ai report to a page, ai_report_text is a multi-line string            
             pdf.add_page()
-            pdf.set_font(chineseFont, size=18)
+            pdf.set_font(fontName, size=18)
             pdf.cell(196, line_height, text='EEG AI Analysis', ln=1, align='C')
             # draw a line 
             pdf.set_draw_color(0, 0, 0)
             pdf.set_line_width(0.5)
             pdf.line(10, 20, 200, 20)
-            pdf.set_font(chineseFont, size=13)
+            pdf.set_font(fontName, size=13)
             pdf.multi_cell(196, line_height-1, self.ai_report_text, 0, 'L')
 
         else:
@@ -551,7 +550,7 @@ class writePDF:
 
 
 # set font chinese
-plt.rc('font', family='Microsoft JhengHei')
+plt.rc('font', family='Arial Unicode MS')
 def yegg(x, L, B, w, D):
     """
     The "universal" formula for an egg, from Narushin et al., "Egg and math:
