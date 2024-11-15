@@ -77,7 +77,7 @@ The system requires the following 10-20 system electrodes (or equivalent mapped 
 - T3, T4, T5, T6
 - O1, O2
 
-## Test Datasets
+## You can get following datasets from the following links and use them to test the code.
 
 ### SPIS Dataset (MAT format)
 Open-source resting-state EEG data:
@@ -135,7 +135,7 @@ python report.py ./recordings/patient002.edf \
 
 ### Note on Language Support
 
-The `--lang` parameter accepts languages supported by the configured LLM models. Language availability and quality may vary depending on the specific LLM model being used. Please refer to the documentation of your configured LLM providers (Google PaLM, Anthropic Claude, OpenAI) for detailed language support information.
+The `--lang` parameter accepts languages supported by the configured LLM models. Language availability and quality may vary depending on the specific LLM model being used. Please refer to the documentation of your configured LLM providers (Google Gemini, Anthropic Claude, OpenAI) for detailed language support information.
 
 
 ## Code Attribution
@@ -155,5 +155,6 @@ If you use this code in your research, please cite:
   title={A Hybrid Artificial Intelligence System for Automated EEG Background Analysis and Report Generation}, 
   year={2024},
   pages={1-13},
+  keywords={Electroencephalography (EEG);artificial intelligence;deep learning;report generation;large language models},
   doi={10.1109/JBHI.2024.3496996}}
 ```
