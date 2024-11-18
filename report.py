@@ -22,6 +22,8 @@ def main():
     parser.add_argument('--ai', action='store_true', help='output ai')
     parser.add_argument('--lang', type=str, help='report language')
     parser.add_argument('--out', type=str, help='output folder')
+    # llm model
+    parser.add_argument('--llm', type=str, help='llm model')
 
     args = parser.parse_args()
     if '/' in args.edf_file:
@@ -35,6 +37,7 @@ def main():
     aiReport = args.ai
     reportLang = args.lang
     output_folder = args.out
+    llm_model = args.llm
     if output_folder is None:
         output_folder = './'
 
@@ -43,11 +46,29 @@ def main():
         envFile=os.path.join(os.getcwd(),'config.env')
         load_dotenv(envFile)
         Google_API_KEY= os.environ.get('GOOGLE_API_KEY')
-        if Google_API_KEY is None:
-            print('Please set GOOGLE_API_KEY in config.env')
+        OPENAI_API_KEY=os.environ.get('OPENAI_KEY')
+        ANTHROPIC_API_KEY=os.environ.get('ANTHROPIC_API_KEY')
+
+        # check model is gpt, claude or gemini
+        if llm_model is None:
+            llm_model = 'gemini-1.5-flash'
+            print('No LLM model specified, using default model: gemini-1.5-flash')
+        if llm_model is not None:
+            if 'gpt' in llm_model.lower():
+                LLM_API_KEY = OPENAI_API_KEY
+            elif 'claude' in llm_model.lower():
+                LLM_API_KEY = ANTHROPIC_API_KEY
+            elif 'gemini' in llm_model.lower():
+                LLM_API_KEY = Google_API_KEY
+            else:
+                LLM_API_KEY = None
+        
+        if LLM_API_KEY is None:
+            print('Please set the LLM_API_KEY in the config.env file')
             return
 
-        CreateReport(edf_filename,edf_path, outputPdf=outputPdf, GOOGLE_API_KEY=Google_API_KEY,
+        CreateReport(edf_filename,edf_path, outputPdf=outputPdf, LLM_API_KEY=LLM_API_KEY,
+                    llm_model=llm_model,
             aiReport=aiReport, reportLang=reportLang,dest_pdfPath=output_folder)
     except Exception as e:
         print(e)

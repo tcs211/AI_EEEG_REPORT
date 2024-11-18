@@ -51,6 +51,9 @@ from createPDF import writePDF
 import re
 import prompt as pmt
 
+from openai import OpenAI
+import anthropic
+
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
@@ -62,8 +65,9 @@ class CreateReport:
     }
 
     alphaEpochs=None
-    def __init__(self, fileName, filePath, GOOGLE_API_KEY='', dest_pdfPath='./',  
+    def __init__(self, fileName, filePath, LLM_API_KEY='', dest_pdfPath='./',  
                  autogenerate=True, outputPdf=False, aiReport=False, reportLang='English',
+                 llm_model='gemini-1.5-pro',
                  model_folder='./models/',
                  model_names=['CNN', 'GoogleNet','ResNet'], useRepair=True, unit_uV=True,
                  removeEpochsRationThreshold=0.3, dropEpochSD=2.2,
@@ -89,7 +93,8 @@ class CreateReport:
         self.model_names=model_names
         self.useRepair=useRepair
         self.results=None
-        self.GOOGLE_API_KEY=GOOGLE_API_KEY
+        self.LLM_API_KEY=LLM_API_KEY
+        self.llm_model=llm_model
         self.outputPdf=outputPdf
         self.dropEpochSD=dropEpochSD
         self.aiReport=aiReport
@@ -643,37 +648,82 @@ class CreateReport:
         self.results=results
         return finalResults
     
-    def AI_generate(self, message, token=None, model_name='gemini-1.5-pro'):
-        genai.configure(api_key=self.GOOGLE_API_KEY)
-        limitWords=''
-        if token:
-            limitWords=' Output in {} words'.format(token)
-        else:
-            generation_config =None
+    def AI_generate(self, message, token=None):
+        model_name=self.llm_model
+
+        if 'gemini' in model_name.lower():
+            genai.configure(api_key=self.LLM_API_KEY)
+            limitWords=''
+            if token:
+                limitWords=' Output in {} words'.format(token)
+            else:
+                generation_config =None
+                
+            model = genai.GenerativeModel(model_name)
+            i=1
             
-        model = genai.GenerativeModel(model_name)
-        i=1
+            while i<4:
+                print ('Attempt: {}, AI is generating the content...'.format(i))
+                try:
+                    response = model.generate_content([message,limitWords])
+                    # print(response)
+                    text=response.text
+                    html=markdown.markdown(text)
+                    soup = BeautifulSoup(html, features='html.parser')
+                    return soup.get_text()
+                    break
+                except Exception as e:
+                    i+=1
+                    print(e)
+                    time.sleep(20)
+                    continue
+
+            return ''
+        elif 'claude' in model_name:
+            client = anthropic.Anthropic(api_key=self.LLM_API_KEY)
+            message = client.messages.create(
+                model=model_name,
+                max_tokens=1024,
+                temperature=0.7,
+                messages=[
+                    {
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": message
+                            }
+                        ]
+                    }
+                ]
+            )
+            text=message.content[0].text
+            # print ('text: ', text)
+            # time.sleep(5)
+            return text
+        elif 'gpt' in model_name:    
         
-        while i<4:
-            print ('Attempt: {}, AI is generating the content...'.format(i))
-            try:
-                response = model.generate_content([message,limitWords])
-                # print(response)
-                text=response.text
-                html=markdown.markdown(text)
-                soup = BeautifulSoup(html, features='html.parser')
-                return soup.get_text()
-                break
-            except Exception as e:
-                i+=1
-                print(e)
-                time.sleep(20)
-                continue
+            client = OpenAI(api_key=self.LLM_API_KEY)
+            response = client.chat.completions.create(
+            model= model_name, #"gpt-4-turbo",#"gpt-3.5-turbo", "gpt-4o"
+            messages=[
+                {
+                "role": "user",
+                "content": message
+                }
+            ],
+            temperature=0.7,
+            max_tokens=1024,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0
+            )
+            text=response.choices[0].message.content
 
-        return ''
+            return text
 
 
-    def AI_Text_generate(self, reportLang=None, prompt=0, token=None, model= 'gemini-1.5-pro-latest'):
+    def AI_Text_generate(self, reportLang=None, prompt=0, token=None):
         if not self.finalResults:
             self.genFinalResults()
         finalResults=self.finalResults
@@ -689,7 +739,7 @@ class CreateReport:
         elif prompt==2:
             message=pmt.reportPrompt(finalResults, reportLang, promptLength='short')
 
-        text=self.AI_generate(message, token, model)
+        text=self.AI_generate(message, token)
         # remove blank lines
         text = os.linesep.join([s for s in text.splitlines() if s])
         # use regexp to insert  \n before === if line start with ===

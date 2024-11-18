@@ -85,7 +85,9 @@ class writePDF:
         
         line_height = 7.5
         fontName='Arial Unicode MS'
-        pdf.add_font(fontName, '', './arialuni.ttf', uni=True)
+        rootPath=os.path.dirname(os.path.abspath(__file__))
+        print ('rootPath: ', rootPath)
+        pdf.add_font(fontName, '', rootPath+'\\arialuni.ttf', uni=True)
     
         
         pdf.set_font(fontName, size=18)
@@ -550,7 +552,7 @@ class writePDF:
 
 
 # set font chinese
-plt.rc('font', family='Arial Unicode MS')
+plt.rc('font')#, family='Arial Unicode MS')
 def yegg(x, L, B, w, D):
     """
     The "universal" formula for an egg, from Narushin et al., "Egg and math:

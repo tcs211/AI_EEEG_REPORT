@@ -4,6 +4,8 @@ A hybrid AI system that performs automated EEG background analysis and generates
 
 [![DOI](https://img.shields.io/badge/DOI-10.1109%2FJBHI.2024.3496996-blue)](https://doi.org/10.1109/JBHI.2024.3496996)
 
+[![arXiv](https://arxiv.org/abs/2411.09874b)](https://arxiv.org/abs/2411.09874)
+
 ## Paper Information
 
 This code implements the methodology described in:
@@ -54,9 +56,9 @@ pip install tensorflow google-generativeai anthropic openai mne python-dotenv \
 1. Create a `config.env` file in the project root
 2. Add your API keys:
 ```
-GOOGLE_API_KEY=YOUR_GOOGLE_API_KEY
-ANTHROPIC_API_KEY=YOUR_ANTHROPIC_API_KEY
-OPENAI_KEY=YOUR_OPENAI_KEY
+GOOGLE_API_KEY=YOUR_GOOGLE_API_KEY # for Google Gemini
+ANTHROPIC_API_KEY=YOUR_ANTHROPIC_API_KEY # for Anthropic Claude
+OPENAI_KEY=YOUR_OPENAI_KEY # for OpenAI gpt models
 ```
 
 ## Usage
@@ -107,6 +109,9 @@ python report.py <eeg_file> [options]
   - Supports any language available in the configured LLM models
   - Common options: English, Chinese (Simplified/Traditional), Japanese, Korean, Spanish, French, German, etc.
   - Language support depends on the capabilities of the configured LLM models
+- `--llm <model>`: Specify LLM model for report generation
+  - Default: "gemini-1.5-pro" 
+  - Suggestions: "gemini-1.5-pro", "claude-3-5-sonnet-20240620", "gpt-4o"
 
 ### Example Commands
 
@@ -117,6 +122,7 @@ python report.py ./SPIS_dataset/S04_restingPre_EC.mat \
     --out ./pdf \      # Save to ./pdf directory
     --ai \             # Enable LLM report generation
     --lang "english"   # Generate report in English
+    --llm "gemini-1.5-pro" # Use Google Gemini LLM model
 
 # Generate report in Traditional Chinese
 python report.py ./recordings/patient001.edf \
@@ -124,6 +130,7 @@ python report.py ./recordings/patient001.edf \
     --out ./reports \
     --ai \
     --lang "traditional chinese"
+    --llm "gpt-4o"
 
 # Generate report in Japanese
 python report.py ./recordings/patient002.edf \
@@ -131,11 +138,13 @@ python report.py ./recordings/patient002.edf \
     --out ./reports \
     --ai \
     --lang "japanese"
+    --llm "claude-3-5-sonnet-20240620"
 ```
 
 ### Note on Language Support
 
 The `--lang` parameter accepts languages supported by the configured LLM models. Language availability and quality may vary depending on the specific LLM model being used. Please refer to the documentation of your configured LLM providers (Google Gemini, Anthropic Claude, OpenAI) for detailed language support information.
+The '--llm' parameter specifies the LLM model to be used for report generation. The default model is "gemini-1.5-pro". Latest models can be found on the respective LLM provider websites.
 
 
 ## Code Attribution
