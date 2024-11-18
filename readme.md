@@ -4,7 +4,7 @@ A hybrid AI system that performs automated EEG background analysis and generates
 
 [![DOI](https://img.shields.io/badge/DOI-10.1109%2FJBHI.2024.3496996-blue)](https://doi.org/10.1109/JBHI.2024.3496996)
 
-[![arXiv](https://arxiv.org/abs/2411.09874b)](https://arxiv.org/abs/2411.09874)
+[![arXiv](https://img.shields.io/badge/arXiv-2411.09874-b31b1b.svg)](https://arxiv.org/abs/2411.09874)
 
 ## Paper Information
 
