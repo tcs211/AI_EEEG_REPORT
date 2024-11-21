@@ -49,7 +49,11 @@ pip install tensorflow google-generativeai anthropic openai mne python-dotenv \
     ipykernel matplotlib pyod pandas scikit-learn seaborn tqdm ipywidgets \
     PyWavelets beautifulsoup4 fpdf2 mne-qt-browser PyQt6 dit librosa \
     statsmodels pyinform pymatreader6
+
 ```
+### Fonts for supported languages in PDF reports
+
+For displaying different languages in the PDF report, you must have the `arialuni.ttf` font file in the root directory.
 
 ### API Configuration
 
