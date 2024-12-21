@@ -13,8 +13,61 @@ import numpy as np
 from scipy.integrate import simpson
 import RepairArtifacts as repair
 from pymatreader import read_mat
+import re
 
 mne.viz.set_browser_backend('qt')
+
+
+def standardize_eeg_channel(channel_name):
+    """
+    Converts EEG channel names to standard form using regex to extract:
+    - 1-2 letters + 1-2 digits (e.g., P4, Fp1, P10)
+    - 1-2 letters + z (e.g., Pz, Cz, FCz)
+    
+    Args:
+        channel_name (str): Original channel name (e.g., 'EEG P4-LE', 'EEG FP1-REF', 'eegP10le', 'Cz-REF')
+        
+    Returns:
+        str: Standardized channel name (e.g., 'P4', 'Fp1', 'P10', 'Cz')
+        None: If no valid channel pattern is found
+    
+    Examples:
+        >>> standardize_eeg_channel('EEG P4-LE')
+        'P4'
+        >>> standardize_eeg_channel('eegFP1ref')
+        'Fp1'
+        >>> standardize_eeg_channel('EEG Cz-REF')
+        'Cz'
+    """
+    if not channel_name:
+        return None
+        
+    # Convert to uppercase for consistent processing
+    channel = channel_name.upper()
+    
+    # Pattern 1: 1-2 letters + 1-2 digits
+    # Pattern 2: 1-2 letters + z
+    pattern = r'(?:[^A-Z]|^)([A-Z]{1,2})((?:\d{1,2})|Z(?![A-Z0-9]))'
+    
+    match = re.search(pattern, channel)
+    if not match:
+        return None
+        
+    # Extract letters and suffix (either numbers or 'z')
+    letters = match.group(1)
+    suffix = match.group(2)
+    
+    # Special handling for 'FP' -> 'Fp'
+    if letters == 'FP':
+        letters = 'Fp'
+    else:
+        letters = letters.capitalize()
+    
+    # Handle 'Z' suffix
+    if suffix == 'Z':
+        suffix = 'z'
+        
+    return f"{letters}{suffix}"
 
 class eegProcess:
     def __init__(self, eegFile, filePath, 
@@ -78,8 +131,8 @@ class eegProcess:
                 raw = mne.io.read_raw_edf(eegFullName, preload=True, units='uV', verbose=False)
             else: #TUH EEG data, get only 600s
                 raw = mne.io.read_raw_edf(eegFullName, preload=True, verbose=False)
-                if self.tmax is None and self.tmin is None:                    
-                    raw=raw.crop(0, 600)
+                # if self.tmax is None and self.tmin is None:                    
+                #     raw=raw.crop(0, 600)
                 print ('raw length: ', raw.times[-1])
             txtfilename = eegFullName.replace('.edf', '.txt')
             # print ('txtfilename: ', txtfilename)
@@ -101,20 +154,35 @@ class eegProcess:
         if self.tmax is not None or self.tmin is not None:
             tmin = 0 if self.tmin is None else self.tmin
             tmax = raw.times[-1] if self.tmax is None else self.tmax
+            # tmax > raw.times[-1] is not allowed
+            if tmax > raw.times[-1]:
+                tmax = raw.times[-1]
             raw = raw.crop(tmin, tmax)
             print ('crop raw data from %s to %s' % (tmin, tmax))
         # print ('events: ', events)        
         chnsToDrop = ['EKG', 'Photic', 'A1', 'A2']
+        chnsMustHave = ['Fp1', 'Fp2', 'F7', 'F8', 'F3', 'F4', 'T5', 'T6', 'P3', 'P4', 'O1', 'O2', 'C3', 'C4', 'Cz', 'Fz', 'Pz', 'T3', 'T4']
+        
+        # rename alternative channels to 10-20 system
+        alternatChIn10_10=['T7', 'T8', 'P7', 'P8', 'POz']
+        mappedChIn10_20=['T3', 'T4', 'T5', 'T6', 'Pz']
+
+
         # rename channels only alpha numeric, first character uppercase, others lowercase
         print ('raw channels: ', raw.ch_names)
         # replace('EEG', '').replace('REF', '')
         if self.renameChannels:
-            raw.rename_channels(lambda x: ''.join([i for i in x.replace('EEG', '').replace('REF', '') if i.isalnum()]
-                                              ).capitalize())
-        print ('raw channels: ', raw.ch_names)
-        # rename alternative channels to 10-20 system
-        alternatChIn10_10=['T7', 'T8', 'P7', 'P8', 'POz']
-        mappedChIn10_20=['T3', 'T4', 'T5', 'T6', 'Pz']
+            # check each channel name
+            for i in range(len(raw.ch_names)):
+                origChName = raw.ch_names[i]
+                # find pattern of channel name match 1-2 letters and 1-2 digits
+                origChName = standardize_eeg_channel(origChName)
+                if origChName is not None:
+                    raw.rename_channels({raw.ch_names[i]: origChName})
+                
+            # raw.rename_channels(lambda x: ''.join([i for i in x.replace('EEG', '').replace('REF', '') if i.isalnum()]
+            #                                   ).capitalize())
+        print ('new channels: ', raw.ch_names)
 
         # rename alternative channels to 10-20 system if exist
         for i in range(len(alternatChIn10_10)):
@@ -125,7 +193,6 @@ class eegProcess:
         for ch in chnsToDrop:
             if ch in raw.ch_names:
                 raw.drop_channels([ch])
-        chnsMustHave = ['Fp1', 'Fp2', 'F7', 'F8', 'F3', 'F4', 'T5', 'T6', 'P3', 'P4', 'O1', 'O2', 'C3', 'C4', 'Cz', 'Fz', 'Pz', 'T3', 'T4']
         
         # remove channels not in chnsMustHave
         for ch in raw.ch_names:

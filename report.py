@@ -24,6 +24,8 @@ def main():
     parser.add_argument('--out', type=str, help='output folder')
     # llm model
     parser.add_argument('--llm', type=str, help='llm model')
+    # TUH eeg
+    parser.add_argument('--tuh', type=bool, help='tuh eeg')
 
     args = parser.parse_args()
     if '/' in args.edf_file:
@@ -38,6 +40,7 @@ def main():
     reportLang = args.lang
     output_folder = args.out
     llm_model = args.llm
+    tuh_eeg = args.tuh
     if output_folder is None:
         output_folder = './'
 
@@ -68,7 +71,7 @@ def main():
             return
 
         CreateReport(edf_filename,edf_path, outputPdf=outputPdf, LLM_API_KEY=LLM_API_KEY,
-                    llm_model=llm_model,
+                    llm_model=llm_model, unit_uV= not tuh_eeg,
             aiReport=aiReport, reportLang=reportLang,dest_pdfPath=output_folder)
     except Exception as e:
         print(e)
