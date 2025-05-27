@@ -166,8 +166,10 @@ If you use this code in your research, please cite:
   author={Tung, Chin-Sung and Liang, Sheng-Fu and Chang, Shu-Feng and Young, Chung-Ping},
   journal={IEEE Journal of Biomedical and Health Informatics}, 
   title={A Hybrid Artificial Intelligence System for Automated EEG Background Analysis and Report Generation}, 
-  year={2024},
-  pages={1-13},
-  keywords={Electroencephalography (EEG);artificial intelligence;deep learning;report generation;large language models},
+  year={2025},
+  volume={29},
+  number={4},
+  pages={2629-2641},
+  keywords={Deep learning;Accuracy;Hospitals;Large language models;Predictive models;Brain modeling;Electroencephalography;Hybrid power systems;Signal analysis;Root mean square;Artificial intelligence;deep learning;electroencephalography (EEG);large language models;report generation},
   doi={10.1109/JBHI.2024.3496996}}
 ```
