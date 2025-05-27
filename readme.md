@@ -1,6 +1,6 @@
 # EEG-AI-Report-Generator
 
-A hybrid AI system that performs automated EEG background analysis and generates clinical reports. This is the implementation of our IEEE JBHI paper (2024).
+A hybrid AI system that performs automated EEG background analysis and generates clinical reports. This is the implementation of our IEEE JBHI paper (2025).
 
 [![DOI](https://img.shields.io/badge/DOI-10.1109%2FJBHI.2024.3496996-blue)](https://doi.org/10.1109/JBHI.2024.3496996)
 
@@ -10,11 +10,11 @@ A hybrid AI system that performs automated EEG background analysis and generates
 
 This code implements the methodology described in:
 
-"A Hybrid Artificial Intelligence System for Automated EEG Background Analysis and Report Generation"  
-*IEEE Journal of Biomedical and Health Informatics (2024)*  
+C. -S. Tung, S. -F. Liang, S. -F. Chang and C. -P. Young, "A Hybrid Artificial Intelligence System for Automated EEG Background Analysis and Report Generation," in IEEE Journal of Biomedical and Health Informatics, vol. 29, no. 4, pp. 2629-2641, April 2025, doi: 10.1109/JBHI.2024.3496996.
+ 
 https://doi.org/10.1109/JBHI.2024.3496996
 
-The paper and its contents are © 2024 IEEE. 
+The paper and its contents are © 2025 IEEE. 
 <!-- Personal use of this material is permitted. Permission from IEEE must be obtained for all other uses, in any current or future media, including reprinting/republishing this material for advertising or promotional purposes, creating new collective works, for resale or redistribution to servers or lists, or reuse of any copyrighted component of this work in other works. -->
 
 ## Code License
